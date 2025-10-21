@@ -1,0 +1,99 @@
+<style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #5f0c71; /* Roxo de fundo */
+      color: #fff;
+    }
+
+    section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 60px 8%;
+      flex-wrap: wrap;
+    }
+
+    .texto {
+      max-width: 600px;
+    }
+
+    .texto h2 {
+      font-size: 3rem;
+      color: #FFD100; /* Amarelo vibrante */
+      font-weight: 900;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .texto h2 span {
+      color: #FFB800;
+      font-weight: 700;
+    }
+
+    .texto p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: #ffffff;
+      margin-top: 20px;
+      text-align: justify;
+    }
+
+    .imagem {
+      flex: 1;
+      text-align: center;
+    }
+
+    .imagem img {
+      max-width: 500px;
+      height: auto;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    .imagem img:hover {
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 850px) {
+      section {
+        flex-direction: column;
+        text-align: center;
+      }
+      .texto h2 {
+        justify-content: center;
+        font-size: 5rem;
+      }
+      .imagem img {
+        margin-top: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <section>
+    <div class="texto">
+      <h2>QUEM <span>SOMOS?</span></h2>
+      <p>
+        Somos apaixonados por açaí e por proporcionar momentos de sabor, saúde e alegria!
+        Nossa açaíteria nasceu com o propósito de oferecer uma experiência única: um açaí de
+        qualidade, com sabor autêntico, ingredientes selecionados e aquele toque especial que
+        conquista no primeiro potinho.
+      </p>
+      <p>
+        Aqui, cada cliente é tratado com carinho e atenção. Valorizamos o frescor, a variedade e a
+        liberdade de montar o açaí do seu jeito, seja ele turbinado com frutas, cremes, chocolates ou
+        aquele granulado irresistível.
+      </p>
+      <p>
+        Trabalhamos com produtos de origem confiável e buscamos sempre inovação no cardápio,
+        para que cada visita seja uma nova descoberta.
+      </p>
+      <p>
+        Mais do que vender açaí, queremos fazer parte da sua rotina, dos seus encontros e dos seus
+        melhores momentos.
+      </p>
+    </div>

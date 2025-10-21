@@ -1,3 +1,21 @@
 .body{
 background-color: #5d0274;
+
+}
+.button {
+  margin-top: 30px;
+  padding: 15px 40px;
+  background-color: #d4aa1d; /* amarelo mostarda */
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-transform: uppercase;
+}
+
+.button:hover {
+  background-color: #b89117;
 }
