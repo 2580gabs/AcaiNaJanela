@@ -1,0 +1,249 @@
+import React, { useState, useEffect } from "react";
+
+export default function DigitalMenu() {
+  const initialProducts = [
+    { id: "acai-p", category: "Açaí", name: "Açaí P (330ml)", size: "P", price: 12, image: "" },
+    { id: "acai-m", category: "Açaí", name: "Açaí M (550ml)", size: "M", price: 16, image: "" },
+    { id: "acai-g", category: "Açaí", name: "Açaí G (770ml)", size: "G", price: 24, image: "" },
+    { id: "sal-p", category: "Salada de Frutas", name: "Salada P (330ml)", size: "P", price: 12, image: "" },
+    { id: "sal-m", category: "Salada de Frutas", name: "Salada M (550ml)", size: "M", price: 16, image: "" },
+    { id: "sal-g", category: "Salada de Frutas", name: "Salada G (770ml)", size: "G", price: 22, image: "" },
+    { id: "ch-dl", category: "Churros", name: "Churros Doce de Leite (un)", price: 8, image: "" },
+    { id: "ch-nu", category: "Churros", name: "Churros Nutella (un)", price: 12, image: "" },
+    { id: "vit-p", category: "Vitaminas", name: "Vitamina P (330ml)", size: "P", price: 10, image: "" },
+    { id: "vit-m", category: "Vitaminas", name: "Vitamina M (550ml)", size: "M", price: 14, image: "" },
+    { id: "vit-g", category: "Vitaminas", name: "Vitamina G (770ml)", size: "G", price: 18, image: "" },
+    { id: "dr-p", category: "Drinks", name: "Drink P (300ml)", size: "P", price: 22, image: "" },
+    { id: "dr-m", category: "Drinks", name: "Drink M (500ml)", size: "M", price: 25, image: "" },
+    { id: "dr-g", category: "Drinks", name: "Drink G (700ml)", size: "G", price: 28, image: "" },
+  ];
+
+  const addonsList = [
+    { id: "banana", name: "Banana", price: 3 },
+    { id: "manga", name: "Manga", price: 3 },
+    { id: "morango", name: "Morango", price: 3 },
+    { id: "uva", name: "Uva", price: 3 },
+    { id: "granola", name: "Granola", price: 3 },
+    { id: "ovomaltine", name: "Ovomaltine", price: 3 },
+    { id: "pacoca", name: "Paçoca", price: 3 },
+    { id: "leite_cond", name: "Leite Condensado", price: 3 },
+    { id: "chantilly", name: "Chantilly", price: 5 },
+    { id: "nutella", name: "Nutella", price: 8 },
+  ];
+
+  const categories = ["Açaí", "Salada de Frutas", "Churros", "Vitaminas", "Drinks"];
+  const [products, setProducts] = useState(initialProducts);
+  const [activeCategory, setActiveCategory] = useState("Açaí");
+  const [query, setQuery] = useState("");
+  const [cart, setCart] = useState([]);
+  const [orderType, setOrderType] = useState(null);
+  const [customerInfo, setCustomerInfo] = useState({ name: "", number: "", address: "", payment: "" });
+  const [discountSlides, setDiscountSlides] = useState([
+    { id: 1, text: "Desconto da semana: 10% em Vitamina M" },
+    { id: 2, text: "Combo: Açaí G + Churros Nutella R$30" },
+    { id: 3, text: "Frete grátis acima de R$40 (Delivery)" },
+  ]);
+  const [slideIndex, setSlideIndex] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setSlideIndex((i) => (i + 1) % discountSlides.length), 4000);
+    return () => clearInterval(t);
+  }, [discountSlides.length]);
+
+  function filtered() {
+    return products.filter(
+      (p) => p.category === activeCategory && p.name.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
+  function addToCart(product, selectedAddons = []) {
+    setCart((c) => [...c, { product, quantity: 1, addons: selectedAddons }]);
+  }
+
+  function removeFromCart(index) {
+    setCart((c) => c.filter((_, i) => i !== index));
+  }
+
+  function changeQuantity(index, delta) {
+    setCart((c) => {
+      const clone = [...c];
+      clone[index].quantity = Math.max(1, clone[index].quantity + delta);
+      return clone;
+    });
+  }
+
+  function lineTotal(item) {
+    const addonsTotal = item.addons?.reduce((s, a) => s + a.price, 0) || 0;
+    return (item.product.price + addonsTotal) * item.quantity;
+  }
+
+  function cartTotal() {
+    return cart.reduce((s, it) => s + lineTotal(it), 0);
+  }
+
+  function sendWhatsApp() {
+    const lines = [];
+    lines.push(`*Pedido via Cardápio Digital*`);
+    lines.push("");
+    cart.forEach((it) => {
+      const addonsNames = it.addons?.length ? ` (+${it.addons.map((a) => a.name).join(", ")})` : "";
+      lines.push(`${it.quantity}x ${it.product.name}${addonsNames} = R$ ${lineTotal(it).toFixed(2)}`);
+    });
+    lines.push("");
+    lines.push(`Total: R$ ${cartTotal().toFixed(2)}`);
+
+    if (orderType === "delivery") {
+      lines.push(`\n📦 Tipo: Delivery`);
+      lines.push(`🏠 Endereço: ${customerInfo.address}`);
+      lines.push(`💳 Pagamento: ${customerInfo.payment}`);
+    } else {
+      lines.push(`\n🍴 Tipo: Retirada no local`);
+      lines.push(`👤 Nome: ${customerInfo.name}`);
+      lines.push(`#️⃣ Número: ${customerInfo.number}`);
+    }
+
+    const text = encodeURIComponent(lines.join("\n"));
+    const phone = "55YOURNUMBER"; // substitua pelo número do vendedor
+    const url = `https://wa.me/${phone}?text=${text}`;
+    window.open(url, "_blank");
+  }
+
+  function ProductCard({ product }) {
+    const [open, setOpen] = useState(false);
+    const [selAddons, setSelAddons] = useState([]);
+    function toggleAddon(a) {
+      setSelAddons((s) => (s.find((x) => x.id === a.id) ? s.filter((x) => x.id !== a.id) : [...s, a]));
+    }
+
+    return (
+        <div className="bg-white rounded-xl p-4 shadow-md flex flex-col border border-gray-200">
+        <div className="h-40 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
+          <span className="text-sm text-gray-500">Imagem</span>
+        </div>
+        <div className="mt-3 flex-1">
+          <h3 className="font-semibold text-[#660f62]">{product.name}</h3>
+          <p className="text-sm text-gray-600">R$ {product.price.toFixed(2)}</p>
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <button onClick={() => addToCart(product, [])} className="px-3 py-2 rounded bg-[#f2c02e] text-[#660f62] text-sm font-semibold">Adicionar</button>
+          <button onClick={() => setOpen(!open)} className="px-2 py-1 rounded border text-sm">Complementos</button>
+        </div>
+        {open && (
+          <div className="mt-3 border-t pt-3">
+            <p className="text-sm font-medium">Adicionais</p>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {addonsList.map((a) => (
+                <button key={a.id} onClick={() => toggleAddon(a)} className={`px-2 py-1 rounded border ${selAddons.find((x) => x.id === a.id) ? 'bg-[#f2c02e]/40' : 'bg-white'}`}>
+                  {a.name} (+R$ {a.price})
+                </button>
+              ))}
+            </div>
+            <div className="mt-3 flex gap-2">
+              <button onClick={() => { addToCart(product, selAddons); setOpen(false); setSelAddons([]); }} className="px-3 py-2 rounded bg-[#660f62] text-white">Adicionar</button>
+              <button onClick={() => setOpen(false)} className="px-3 py-2 rounded border">Cancelar</button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#fff] p-6">
+      <div className="max-w-5xl mx-auto bg-[#fff] rounded-2xl shadow-xl overflow-hidden border">
+        {/* Header */}
+        <div className="p-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center text-[#660f62] font-bold">LOGO</div>
+            <h1 className="text-2xl font-bold text-[#660f62]">Açaí na Janela — Cardápio</h1>
+          </div>
+          <div className="w-1/3 flex items-center gap-2">
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar..." className="w-full px-3 py-2 rounded border" />
+            <button className="px-3 py-2 rounded bg-[#660f62] text-white" onClick={() => { document.getElementById('cart').scrollIntoView({ behavior: 'smooth' }); }}>Sacola ({cart.length})</button>
+          </div>
+        </div>
+
+        {/* Carrossel */}
+        <div className="p-4 border-t">
+          <div className="bg-[#f2c02e]/30 rounded-lg p-3 flex items-center justify-between">
+            <div className="flex-1 text-[#660f62] font-medium">{discountSlides[slideIndex].text}</div>
+            <div className="flex gap-2">
+              {discountSlides.map((_, i) => (
+                <button key={i} onClick={() => setSlideIndex(i)} className={`w-3 h-3 rounded-full ${i === slideIndex ? 'bg-[#660f62]' : 'bg-gray-300'}`} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Categorias */}
+        <div className="p-4 flex gap-2 overflow-x-auto">
+          {categories.map((c) => (
+            <button key={c} onClick={() => setActiveCategory(c)} className={`px-3 py-1 rounded-full ${activeCategory === c ? 'bg-[#660f62] text-white' : 'bg-white border text-[#660f62]'}`}>{c}</button>
+          ))}
+        </div>
+
+        {/* Produtos */}
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {filtered().map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+
+        {/* Sacola */}
+        <div id="cart" className="p-4 border-t bg-gray-50">
+          <h2 className="text-xl font-semibold text-[#660f62]">Sacola</h2>
+          {cart.length === 0 ? (
+            <div className="py-6 text-center text-gray-500">Sua sacola está vazia</div>
+          ) : (
+            <div className="mt-4 space-y-3">
+              {cart.map((it, idx) => (
+                <div key={idx} className="flex items-center justify-between bg-white p-3 rounded-lg shadow-sm">
+                  <div>
+                    <div className="font-medium text-[#660f62]">{it.product.name}</div>
+                    <div className="text-sm text-gray-600">{it.addons?.length ? `+ ${it.addons.map(a=>a.name).join(', ')}` : 'Sem adicionais'}</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-sm font-medium">R$ {lineTotal(it).toFixed(2)}</div>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => changeQuantity(idx, -1)} className="px-2 py-1 border rounded">-</button>
+                      <div className="px-2">{it.quantity}</div>
+                      <button onClick={() => changeQuantity(idx, +1)} className="px-2 py-1 border rounded">+</button>
+                    </div>
+                    <button onClick={() => removeFromCart(idx)} className="px-2 py-1 text-red-600">Remover</button>
+                  </div>
+                </div>
+              ))}
+
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-lg font-semibold">Total</div>
+                <div className="text-2xl font-bold text-[#660f62]">R$ {cartTotal().toFixed(2)}</div>
+              </div>
+
+              {!orderType && (
+                <div className="mt-4 flex gap-3">
+                  <button onClick={() => setOrderType('delivery')} className="flex-1 px-4 py-3 rounded bg-[#f2c02e] text-[#660f62] font-semibold">Delivery</button>
+                  <button onClick={() => setOrderType('retirada')} className="flex-1 px-4 py-3 rounded bg-[#660f62] text-white font-semibold">Retirada</button>
+                </div>
+              )}
+
+              {orderType === 'delivery' && (
+                <div className="mt-4 space-y-3">
+                  <input placeholder="Endereço completo" className="w-full px-3 py-2 rounded border" value={customerInfo.address} onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })} />
+                  <input placeholder="Forma de pagamento (Pix, Cartão, etc.)" className="w-full px-3 py-2 rounded border" value={customerInfo.payment} onChange={(e) => setCustomerInfo({ ...customerInfo, payment: e.target.value })} />
+                  <button onClick={sendWhatsApp} className="w-full px-4 py-3 rounded bg-[#660f62] text-white font-semibold">Enviar Pedido via WhatsApp</button>
+                </div>
+              )}
+
+              {orderType === 'retirada' && (
+                <div className="mt-4 space-y-3">
+                  <input placeholder="Nome" className="w-full px-3 py-2 rounded border" value={customerInfo.name} onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })} />
+                  <input placeholder="Número" className="w-full px-3 py-2 rounded border" value={customerInfo.number} onChange={(e) => setCustomerInfo({ ...customerInfo, number: e.target.value })} />
+                  <button onClick={sendWhatsApp} className="w-full px-4 py-3 rounded bg-[#f2c02e] text-[#660f62] font-semibold">Enviar Pedido via WhatsApp</button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Rodapé */}
+        <div className="p-4 text-center text
