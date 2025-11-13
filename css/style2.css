@@ -1,0 +1,265 @@
+
+:root {
+  --roxo: #660f62;
+  --amarelo: #f2c02e;
+  --cinza: #8a8f94;
+  --branco: #fff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: var(--roxo);
+  color: var(--branco);
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+header {
+  background-color: var(--amarelo);
+  color: var(--roxo);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+header .logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--roxo);
+}
+
+header h1 {
+  font-size: 1.8em;
+  font-weight: 700;
+}
+
+#cart-button {
+  background-color: var(--roxo);
+  color: var(--branco);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+#cart-button:hover {
+  background-color: #520c4f;
+}
+
+/* ===== MENU ===== */
+.menu-section {
+  padding: 30px 20px;
+}
+
+.menu-section h2 {
+  font-size: 1.6em;
+  color: var(--amarelo);
+  margin-bottom: 15px;
+  border-left: 5px solid var(--amarelo);
+  padding-left: 10px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background-color: #771571;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  padding: 15px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  color: var(--amarelo);
+  margin-bottom: 5px;
+}
+
+.card p {
+  color: var(--branco);
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.price {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.card button {
+  background-color: var(--amarelo);
+  color: var(--roxo);
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.card button:hover {
+  background-color: #ffdb4d;
+}
+
+/* ===== EXTRAS ===== */
+.extras-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.extra {
+  background-color: #7d2178;
+  border-radius: 10px;
+  width: 90px;
+  padding: 8px;
+  text-align: center;
+  font-size: 0.8em;
+}
+
+.extra img {
+  width: 100%;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+/* ===== CARRINHO ===== */
+#cart-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.cart-content {
+  background-color: var(--branco);
+  color: var(--roxo);
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+.cart-content h2 {
+  color: var(--roxo);
+  margin-bottom: 10px;
+}
+
+#cart-items {
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+#cart-items li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.cart-content button {
+  width: 100%;
+  margin-top: 10px;
+  background-color: var(--roxo);
+  color: var(--branco);
+  border: none;
+  padding: 10px;
+  border-radius: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cart-content button:hover {
+  background-color: #520c4f;
+}
+
+.options label {
+  display: block;
+  margin: 8px 0;
+}
+
+#endereco {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+.pagamento select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+#pix-qrcode img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.2em;
+  }
+
+  #cart-button {
+    font-size: 0.9em;
+    padding: 6px 10px;
+  }
+
+  .card img {
+    height: 130px;
+  }
+
+  .menu-section h2 {
+    font-size: 1.3em;
+  }
+
+  .extra {
+    width: 80px;
+  }
+}
